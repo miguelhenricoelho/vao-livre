@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{global/global :: cabeca(#{historico.titulo}, ~{::link}, ~{})}">
+  <link rel="stylesheet" href="/clientes/clientes.css">
+</head>
+<body>
+<th:block th:replace="~{global/global :: topo}"></th:block>
+
+<main class="conteudo" id="conteudo" tabindex="-1">
+  <header class="cabecalho">
+    <p class="cabecalho__rotulo" th:text="#{historico.total(${pagina.totalElements})}">120 registros</p>
+    <h1 class="cabecalho__titulo" th:text="#{historico.titulo}">Histórico de acessos</h1>
+    <p class="cabecalho__apoio" th:text="#{historico.apoio}">Toda tentativa, liberada ou bloqueada.</p>
+  </header>
+
+  <form class="filtros filtros--historico" th:action="@{/historico}" method="get" role="search">
+    <div class="campo">
+      <label class="campo__rotulo" for="de" th:text="#{historico.de}">De</label>
+      <input class="entrada" id="de" name="de" type="date" th:value="${filtro.de()}">
+    </div>
+    <div class="campo">
+      <label class="campo__rotulo" for="ate" th:text="#{historico.ate}">Até</label>
+      <input class="entrada" id="ate" name="ate" type="date" th:value="${filtro.ate()}">
+    </div>
+    <div class="campo">
+      <label class="campo__rotulo" for="placa" th:text="#{historico.placa}">Placa</label>
+      <input class="entrada placa" id="placa" name="placa" type="search" th:value="${filtro.placa()}" autocapitalize="characters">
+    </div>
+    <div class="campo">
+      <label class="campo__rotulo" for="resultado" th:text="#{historico.resultado}">Resultado</label>
+      <select class="entrada" id="resultado" name="resultado">
+        <option value="" th:text="#{historico.todos}">Todos</option>
+        <option value="LIBERADO" th:selected="${filtro.resultado()?.name() == 'LIBERADO'}" th:text="#{historico.liberados}">Liberados</option>
+        <option value="BLOQUEADO" th:selected="${filtro.resultado()?.name() == 'BLOQUEADO'}" th:text="#{historico.bloqueados}">Bloqueados</option>
+      </select>
+    </div>
+    <div class="acoes">
+      <button class="botao botao--contorno" type="submit" th:text="#{global.buscar}">Buscar</button>
+      <a class="botao botao--texto" th:href="@{/historico}" th:text="#{global.limpar}">Limpar</a>
+    </div>
+  </form>
+
+  <div class="rolagem" tabindex="0" role="region" th:attr="aria-label=#{historico.titulo}">
+    <table class="tabela" th:if="${!pagina.empty}">
+      <thead><tr>
+        <th scope="col" th:text="#{historico.quando}">Quando</th>
+        <th scope="col" th:text="#{historico.placa}">Placa</th>
+        <th scope="col" th:text="#{historico.cliente}">Cliente</th>
+        <th scope="col" th:text="#{historico.tipo}">Registro</th>
+        <th scope="col" th:text="#{historico.resultado}">Resultado</th>
+        <th scope="col" th:text="#{historico.operador}">Operador</th>
+      </tr></thead>
+      <tbody>
+        <tr th:each="l : ${pagina.content}">
+          <td class="numero" th:text="${l.quando()}">25/11/2026 08:12</td>
+          <td class="placa" th:text="${l.placa()}">BRA2E19</td>
+          <td th:text="${l.cliente()}">Cliente</td>
+          <td th:text="${l.tipo()}">Entrada</td>
+          <td>
+            <span th:if="${l.liberado()}" class="selo" th:text="#{historico.liberado}">Liberado</span>
+            <span th:unless="${l.liberado()}" class="selo selo--alerta" th:text="${l.motivo()}">Vagas em uso</span>
+          </td>
+          <td th:text="${l.operador()}">Ana</td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="tabela__vazia" th:if="${pagina.empty}" th:text="#{historico.vazio}">Nenhum registro.</p>
+  </div>
+  <nav th:replace="~{global/global :: paginacao(${pagina})}"></nav>
+</main>
+
+<th:block th:replace="~{global/global :: rodape}"></th:block>
+</body>
+</html>

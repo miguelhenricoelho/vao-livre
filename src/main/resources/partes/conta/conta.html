@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{global/global :: cabeca(#{conta.titulo}, ~{}, ~{})}"></head>
+<body>
+<th:block th:replace="~{global/global :: topo}"></th:block>
+
+<main class="conteudo" id="conteudo" tabindex="-1">
+  <header class="cabecalho">
+    <p class="cabecalho__rotulo" th:text="|${eu.nome} · ${eu.papel.descricao}|">Nome · Papel</p>
+    <h1 class="cabecalho__titulo" th:text="#{conta.titulo}">Minha conta</h1>
+    <p class="cabecalho__apoio" th:text="#{conta.apoio}">Troque a sua senha pessoal.</p>
+  </header>
+
+  <th:block th:replace="~{global/global :: avisos}"></th:block>
+
+  <form class="formulario" th:action="@{/conta/senha}" th:object="${form}" method="post" novalidate>
+    <div class="campo">
+      <label class="campo__rotulo" for="atual" th:text="#{conta.atual}">Senha atual</label>
+      <input class="entrada" id="atual" name="atual" type="password" autocomplete="current-password" required
+             th:attr="aria-invalid=${#fields.hasErrors('atual') ? 'true' : null}">
+      <p class="campo__erro" th:if="${#fields.hasErrors('atual')}" th:errors="*{atual}">Erro</p>
+    </div>
+    <div class="campo">
+      <label class="campo__rotulo" for="nova" th:text="#{conta.nova}">Nova senha</label>
+      <input class="entrada" id="nova" name="nova" type="password" autocomplete="new-password" minlength="10" required
+             aria-describedby="ajuda-nova" th:attr="aria-invalid=${#fields.hasErrors('nova') ? 'true' : null}">
+      <p class="campo__ajuda" id="ajuda-nova" th:text="#{conta.nova.ajuda}">Pelo menos 10 caracteres.</p>
+      <p class="campo__erro" th:if="${#fields.hasErrors('nova')}" th:errors="*{nova}">Erro</p>
+    </div>
+    <div class="campo">
+      <label class="campo__rotulo" for="confirmacao" th:text="#{conta.confirmacao}">Repita a nova senha</label>
+      <input class="entrada" id="confirmacao" name="confirmacao" type="password" autocomplete="new-password" required
+             th:attr="aria-invalid=${#fields.hasErrors('confirmacao') ? 'true' : null}">
+      <p class="campo__erro" th:if="${#fields.hasErrors('confirmacao')}" th:errors="*{confirmacao}">Erro</p>
+    </div>
+    <div><button class="botao" type="submit" th:text="#{conta.trocar}">Trocar senha</button></div>
+  </form>
+</main>
+
+<th:block th:replace="~{global/global :: rodape}"></th:block>
+</body>
+</html>

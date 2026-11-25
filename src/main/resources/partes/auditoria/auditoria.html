@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{global/global :: cabeca(#{auditoria.titulo}, ~{}, ~{})}"></head>
+<body>
+<th:block th:replace="~{global/global :: topo}"></th:block>
+
+<main class="conteudo" id="conteudo" tabindex="-1">
+  <header class="cabecalho">
+    <p class="cabecalho__rotulo" th:text="#{auditoria.total(${pagina.totalElements})}">30 ações</p>
+    <h1 class="cabecalho__titulo" th:text="#{auditoria.titulo}">Auditoria</h1>
+    <p class="cabecalho__apoio" th:text="#{auditoria.apoio}">Quem fez cada ação administrativa.</p>
+  </header>
+
+  <div class="rolagem" tabindex="0" role="region" th:attr="aria-label=#{auditoria.titulo}">
+    <table class="tabela" th:if="${!pagina.empty}">
+      <thead><tr>
+        <th scope="col" th:text="#{auditoria.quando}">Quando</th>
+        <th scope="col" th:text="#{auditoria.quem}">Quem</th>
+        <th scope="col" th:text="#{auditoria.acao}">Ação</th>
+        <th scope="col" th:text="#{auditoria.detalhe}">Detalhe</th>
+      </tr></thead>
+      <tbody>
+        <tr th:each="l : ${pagina.content}">
+          <td class="numero" th:text="${l.quando()}">25/11/2026 08:00</td>
+          <td th:text="${l.quem()}">Carlos</td>
+          <td th:text="${l.acao()}">Alterou contrato</td>
+          <td class="apoio" th:text="${l.resumo()}">Vagas de 5 para 8.</td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="tabela__vazia" th:if="${pagina.empty}" th:text="#{auditoria.vazio}">Nenhuma ação registrada ainda.</p>
+  </div>
+  <nav th:replace="~{global/global :: paginacao(${pagina})}"></nav>
+</main>
+
+<th:block th:replace="~{global/global :: rodape}"></th:block>
+</body>
+</html>

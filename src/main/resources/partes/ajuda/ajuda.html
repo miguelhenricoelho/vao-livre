@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{global/global :: cabeca(#{ajuda.titulo}, ~{}, ~{})}"></head>
+<body>
+<th:block th:replace="~{global/global :: topo}"></th:block>
+
+<main class="conteudo" id="conteudo" tabindex="-1">
+  <header class="cabecalho">
+    <h1 class="cabecalho__titulo" th:text="#{ajuda.titulo}">Ajuda da portaria</h1>
+    <p class="cabecalho__apoio" th:text="#{ajuda.apoio}">O que cada resultado significa.</p>
+  </header>
+
+  <section class="secao" th:each="item : ${ {'liberado','vagas','contrato','nao-cadastrada','ja-no-patio'} }">
+    <h2 class="secao__rotulo">
+      <span class="selo" th:classappend="${item != 'liberado'} ? 'selo--alerta'" th:text="#{'ajuda.' + ${item} + '.titulo'}">Entrada liberada</span>
+    </h2>
+    <p class="secao__corpo" th:text="#{'ajuda.' + ${item} + '.texto'}">Texto</p>
+  </section>
+
+  <section class="secao" aria-labelledby="titulo-suporte">
+    <h2 class="secao__rotulo" id="titulo-suporte" th:text="#{ajuda.suporte}">Precisa de ajuda agora?</h2>
+    <div class="secao__corpo">
+      <p th:if="${linkSuporte}" th:text="#{ajuda.suporte.apoio}">O suporte responde pelo WhatsApp.</p>
+      <p><a th:if="${linkSuporte}" class="botao" th:href="${linkSuporte}" target="_blank" rel="noopener">
+        <svg class="botao__icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l1.3-3.9A8 8 0 1 1 8 18.8z"/></svg>
+        <span th:text="#{ajuda.suporte.botao}">Pedir ajuda ao suporte</span>
+      </a></p>
+      <p th:unless="${linkSuporte}" class="apoio" th:text="#{ajuda.suporte.sem-numero}">Sem número.</p>
+    </div>
+  </section>
+</main>
+
+<th:block th:replace="~{global/global :: rodape}"></th:block>
+</body>
+</html>

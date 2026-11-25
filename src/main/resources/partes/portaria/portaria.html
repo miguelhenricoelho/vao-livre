@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{global/global :: cabeca(${resultado != null ? #messages.msg('portaria.titulo.' + (resultado.liberado ? (resultado.entrada ? 'entrada' : 'saida') : (resultado.entrada ? 'bloqueada' : 'sem-saida'))) : #messages.msg('portaria.titulo')}, ~{::link}, ~{::script})}">
+  <link rel="stylesheet" href="/portaria/portaria.css">
+  <script src="/portaria/portaria.js" defer></script>
+</head>
+<body>
+<th:block th:replace="~{global/global :: topo}"></th:block>
+
+<main class="conteudo" id="conteudo" tabindex="-1">
+  <header class="cabecalho">
+    <p class="cabecalho__rotulo" th:text="#{portaria.rotulo(${hoje}, ${eu.nome})}">25/11/2026 · Ana</p>
+    <h1 class="cabecalho__titulo" th:text="#{portaria.titulo}">Portaria</h1>
+  </header>
+
+  <th:block th:replace="~{global/global :: avisos}"></th:block>
+
+  <div class="portaria">
+    <div class="portaria__registro">
+      <form class="registro" th:object="${form}" method="post" th:action="@{/portaria/entrada}" novalidate>
+        <label class="registro__rotulo" for="placa" th:text="#{portaria.placa}">Placa do veículo</label>
+        <input class="registro__campo placa" id="placa" type="text" th:field="*{placa}"
+               inputmode="text" autocapitalize="characters" autocomplete="off" spellcheck="false" maxlength="8"
+               aria-describedby="ajuda-placa" required data-placa
+               th:attr="aria-invalid=${#fields.hasErrors('placa') ? 'true' : null}">
+        <p class="campo__erro" th:if="${#fields.hasErrors('placa')}" th:errors="*{placa}">Erro</p>
+        <p class="campo__ajuda" id="ajuda-placa" th:text="#{portaria.placa.ajuda}">Formato</p>
+        <div class="registro__acoes">
+          <button class="botao" type="submit" th:text="#{portaria.entrada}">Registrar entrada</button>
+          <button class="botao botao--contorno" type="submit" th:formaction="@{/portaria/saida}" th:text="#{portaria.saida}">Registrar saída</button>
+        </div>
+      </form>
+
+      <section th:if="${resultado}" class="resultado" role="status"
+               th:classappend="${resultado.liberado} ? 'resultado--liberado' : 'resultado--bloqueado'"
+               th:with="r=${resultado}">
+        <p class="resultado__titulo">
+          <svg class="resultado__icone" viewBox="0 0 24 24" aria-hidden="true">
+            <path th:if="${r.liberado}" d="M4.5 12.5l5 5L19.5 7"/>
+            <path th:unless="${r.liberado}" d="M6 6l12 12M18 6L6 18"/>
+          </svg>
+          <span th:text="#{${'portaria.titulo.' + (r.liberado ? (r.entrada ? 'entrada' : 'saida') : (r.entrada ? 'bloqueada' : 'sem-saida'))}}">Entrada liberada</span>
+        </p>
+        <p class="resultado__placa placa" th:text="${r.placa()}">ABC1D23</p>
+        <p class="resultado__frase"
+           th:text="#{${r.chaveDaFrase()}(${r.cliente()}, ${r.emUso()}, ${r.vagas()}, ${r.vaga()}, ${r.dataDoContrato()})}">Frase</p>
+
+        <th:block th:if="${!r.liberado and r.motivo().name() == 'VAGAS_ESGOTADAS'}">
+          <p class="resultado__apoio" th:text="#{portaria.libera-quando}">A entrada libera quando um destes veículos sair:</p>
+          <ul class="resultado__lista">
+            <li th:each="p : ${r.ocupando()}"><span class="placa" th:text="${p.placa()}">BRA2E19</span> <span class="apoio" th:text="#{portaria.desde(${p.desde()})}">desde 07:42</span></li>
+          </ul>
+        </th:block>
+
+        <p class="resultado__apoio" th:if="${r.liberado and !r.entrada and r.permanencia() != null}"
+           th:text="#{portaria.permanencia(${r.hora()}, ${r.permanencia()})}">Saiu às 09:30.</p>
+        <p class="resultado__apoio" th:text="#{portaria.registrado(${r.hora()}, ${eu.nome})}">Registrado às 08:12.</p>
+
+        <div class="acoes resultado__acoes">
+          <a th:if="${r.whatsappAviso()}" class="botao botao--alerta" th:href="${r.whatsappAviso()}" target="_blank" rel="noopener">
+            <svg class="botao__icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l1.3-3.9A8 8 0 1 1 8 18.8z"/></svg>
+            <span th:text="#{portaria.avisar}">Avisar o cliente pelo WhatsApp</span>
+          </a>
+          <form th:if="${!r.liberado and r.motivo().name() == 'JA_NO_PATIO'}" th:action="@{/portaria/saida}" method="post">
+            <input type="hidden" name="placa" th:value="${r.placa()}">
+            <button class="botao botao--contorno" type="submit" th:text="#{portaria.registrar-saida-de(${r.placa()})}">Registrar saída</button>
+          </form>
+          <a th:if="${!r.liberado and r.motivo().name() == 'PLACA_NAO_CADASTRADA'}" class="botao botao--texto" th:href="@{/ajuda}" th:text="#{portaria.ver-ajuda}">Ver a ajuda</a>
+        </div>
+      </section>
+
+      <p th:unless="${resultado}" class="portaria__vazio apoio" th:text="#{portaria.vazio}">Nenhum registro ainda.</p>
+    </div>
+
+    <section class="portaria__garagem" th:attr="aria-label=#{portaria.garagem}">
+      <th:block th:if="${resultado != null and resultado.quadro() != null}">
+        <div th:replace="~{portaria/quadro :: quadro(${resultado.quadro()}, ${resultado.liberado})}"></div>
+      </th:block>
+      <div th:if="${resultado == null or resultado.quadro() == null}" class="garagem garagem--vazia">
+        <p class="garagem__titulo" th:text="#{portaria.garagem}">Garagem do cliente</p>
+        <p class="apoio" th:text="#{portaria.garagem.vazia}">Aparece aqui.</p>
+      </div>
+    </section>
+  </div>
+
+  <section class="secao patio" aria-labelledby="titulo-patio">
+    <h2 class="secao__rotulo" id="titulo-patio">
+      <span class="secao__numero" th:text="#{portaria.patio.total(${#lists.size(patio)})}">6 veículos</span>
+      <span th:text="#{portaria.patio}">No pátio agora</span>
+    </h2>
+    <div class="secao__corpo rolagem" tabindex="0" role="region" aria-labelledby="titulo-patio">
+      <table class="tabela" th:if="${!#lists.isEmpty(patio)}">
+        <thead><tr>
+          <th scope="col" th:text="#{portaria.col.placa}">Placa</th>
+          <th scope="col" th:text="#{portaria.col.cliente}">Cliente</th>
+          <th scope="col" th:text="#{portaria.col.vaga}">Vaga</th>
+          <th scope="col" th:text="#{portaria.col.entrada}">Entrada</th>
+        </tr></thead>
+        <tbody>
+          <tr th:each="l : ${patio}">
+            <td class="placa" th:text="${l.placa()}">BRA2E19</td>
+            <td th:text="${l.cliente()}">Cliente</td>
+            <td class="numero" th:text="${l.vaga()}">1</td>
+            <td class="numero" th:text="${l.entrada()}">07:42</td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="tabela__vazia" th:if="${#lists.isEmpty(patio)}" th:text="#{portaria.patio.vazio}">Nenhum veículo no pátio agora.</p>
+    </div>
+  </section>
+</main>
+
+<th:block th:replace="~{global/global :: rodape}"></th:block>
+
+</body>
+</html>

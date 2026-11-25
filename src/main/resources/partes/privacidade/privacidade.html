@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{global/global :: cabeca(#{privacidade.titulo}, ~{}, ~{})}"></head>
+<body>
+<th:block th:replace="~{global/global :: topo}"></th:block>
+
+<main class="conteudo" id="conteudo" tabindex="-1">
+  <header class="cabecalho">
+    <h1 class="cabecalho__titulo" th:text="#{privacidade.titulo}">Privacidade</h1>
+    <p class="cabecalho__apoio" th:text="#{privacidade.apoio}">O que o sistema guarda.</p>
+  </header>
+
+  <p class="aviso aviso--revisao" th:if="${modoRevisao}">[REVISAR COM O CLIENTE] Texto escrito a partir do que o sistema guarda de verdade. Validar com o advogado ou o contador do estacionamento.</p>
+
+  <section class="secao" th:each="item : ${ {'guarda','para-que','quem-ve','quanto-tempo','direitos'} }">
+    <h2 class="secao__rotulo" th:text="#{'privacidade.' + ${item} + '.titulo'}">Título</h2>
+    <p class="secao__corpo" th:text="#{'privacidade.' + ${item} + '.texto'}">Texto</p>
+  </section>
+</main>
+
+<th:block th:replace="~{global/global :: rodape}"></th:block>
+</body>
+</html>

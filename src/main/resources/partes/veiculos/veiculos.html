@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{global/global :: cabeca(#{veiculos.titulo}, ~{::link}, ~{::script})}">
+  <link rel="stylesheet" href="/clientes/clientes.css">
+  <script src="/clientes/clientes.js" defer></script>
+</head>
+<body>
+<th:block th:replace="~{global/global :: topo}"></th:block>
+
+<main class="conteudo" id="conteudo" tabindex="-1">
+  <header class="cabecalho">
+    <p class="cabecalho__rotulo" th:text="#{veiculos.total(${pagina.totalElements})}">20 veículos</p>
+    <h1 class="cabecalho__titulo" th:text="#{veiculos.titulo}">Veículos</h1>
+  </header>
+
+  <th:block th:replace="~{global/global :: avisos}"></th:block>
+
+  <section class="secao" aria-labelledby="titulo-novo">
+    <h2 class="secao__rotulo" id="titulo-novo" th:text="#{veiculos.novo}">Cadastrar veículo</h2>
+    <form class="secao__corpo" th:action="@{/veiculos}" th:object="${form}" method="post" novalidate>
+      <div class="linha-de-campos">
+        <div class="campo">
+          <label class="campo__rotulo" for="clienteId" th:text="#{veiculos.cliente}">Cliente</label>
+          <select class="entrada" id="clienteId" th:field="*{clienteId}" required
+                  th:attr="aria-invalid=${#fields.hasErrors('clienteId') ? 'true' : null}">
+            <option value="" th:text="#{veiculos.escolha}">Escolha o cliente</option>
+            <option th:each="c : ${clientes}" th:value="${c.id()}" th:text="${c.nome()}">Cliente</option>
+          </select>
+          <p class="campo__erro" th:if="${#fields.hasErrors('clienteId')}" th:errors="*{clienteId}">Erro</p>
+        </div>
+        <div class="campo">
+          <label class="campo__rotulo" for="placa" th:text="#{veiculos.placa}">Placa</label>
+          <input class="entrada placa" id="placa" type="text" th:field="*{placa}" autocapitalize="characters" autocomplete="off" maxlength="8" required data-mascara="placa"
+                 th:attr="aria-invalid=${#fields.hasErrors('placa') ? 'true' : null}">
+          <p class="campo__erro" th:if="${#fields.hasErrors('placa')}" th:errors="*{placa}">Erro</p>
+        </div>
+        <div class="campo">
+          <label class="campo__rotulo" for="modelo" th:text="#{veiculos.modelo}">Modelo</label>
+          <input class="entrada" id="modelo" type="text" th:field="*{modelo}">
+        </div>
+        <div class="campo">
+          <label class="campo__rotulo" for="cor" th:text="#{veiculos.cor}">Cor</label>
+          <input class="entrada" id="cor" type="text" th:field="*{cor}">
+        </div>
+      </div>
+      <div><button class="botao" type="submit" th:text="#{veiculos.salvar}">Cadastrar veículo</button></div>
+    </form>
+  </section>
+
+  <section class="secao" aria-labelledby="titulo-lista">
+    <h2 class="secao__rotulo" id="titulo-lista" th:text="#{veiculos.lista}">Todos os veículos</h2>
+    <div class="secao__corpo">
+      <form class="filtros" th:action="@{/veiculos}" method="get" role="search">
+        <div class="campo filtros__busca">
+          <label class="campo__rotulo" for="busca" th:text="#{veiculos.busca}">Placa ou cliente</label>
+          <input class="entrada" id="busca" name="busca" type="search" th:value="${busca}">
+        </div>
+        <label class="marcador">
+          <input type="checkbox" name="inativos" value="true" th:checked="${inativos}">
+          <span th:text="#{veiculos.inativos}">Mostrar desativados</span>
+        </label>
+        <div class="acoes">
+          <button class="botao botao--contorno" type="submit" th:text="#{global.buscar}">Buscar</button>
+          <a class="botao botao--texto" th:href="@{/veiculos}" th:text="#{global.limpar}">Limpar</a>
+        </div>
+      </form>
+      <div class="rolagem" tabindex="0" role="region" aria-labelledby="titulo-lista">
+        <table class="tabela" th:if="${!pagina.empty}">
+          <thead><tr>
+            <th scope="col" th:text="#{veiculos.placa}">Placa</th>
+            <th scope="col" th:text="#{veiculos.modelo}">Veículo</th>
+            <th scope="col" th:text="#{veiculos.cliente}">Cliente</th>
+            <th scope="col" th:text="#{veiculos.agora}">Agora</th>
+          </tr></thead>
+          <tbody>
+            <tr th:each="v : ${pagina.content}">
+              <td class="placa" th:text="${v.placa()}">BRA2E19</td>
+              <td th:text="${v.descricao()}">Carro</td>
+              <td><a th:href="@{/clientes/{id}(id=${v.clienteId()})}" th:text="${v.cliente()}">Cliente</a></td>
+              <td>
+                <span th:if="${v.noPatio()}" class="selo" th:text="#{veiculos.no-patio}">No pátio</span>
+                <span th:if="${!v.noPatio() and v.ativo()}" class="selo selo--neutro" th:text="#{veiculos.fora}">Fora</span>
+                <span th:unless="${v.ativo()}" class="selo selo--alerta" th:text="#{veiculos.desativado}">Desativado</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="tabela__vazia" th:if="${pagina.empty}" th:text="#{veiculos.vazio}">Nenhum veículo encontrado.</p>
+      </div>
+      <nav th:replace="~{global/global :: paginacao(${pagina})}"></nav>
+    </div>
+  </section>
+</main>
+
+<th:block th:replace="~{global/global :: rodape}"></th:block>
+</body>
+</html>

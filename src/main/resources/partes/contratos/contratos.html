@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{global/global :: cabeca(#{contratos.titulo}, ~{}, ~{})}"></head>
+<body>
+<th:block th:replace="~{global/global :: topo}"></th:block>
+
+<main class="conteudo" id="conteudo" tabindex="-1">
+  <header class="cabecalho">
+    <p class="cabecalho__rotulo"><a th:href="@{/clientes/{id}(id=${clienteId})}" th:text="${cliente}">Cliente</a></p>
+    <h1 class="cabecalho__titulo" th:text="${novo} ? #{contratos.novo} : #{contratos.titulo}">Contrato de vagas</h1>
+    <p class="cabecalho__apoio" th:unless="${novo}" th:text="#{contratos.em-uso(${emUso})}">4 veículos no pátio agora.</p>
+  </header>
+
+  <th:block th:replace="~{global/global :: avisos}"></th:block>
+
+  <form class="formulario" th:action="@{/contratos/{id}(id=${clienteId})}" th:object="${form}" method="post" novalidate>
+    <div class="linha-de-campos">
+      <div class="campo">
+        <label class="campo__rotulo" for="vagas" th:text="#{contratos.vagas}">Vagas contratadas</label>
+        <input class="entrada numero" id="vagas" type="number" min="1" max="500" inputmode="numeric" th:field="*{vagas}" required
+               th:attr="aria-invalid=${#fields.hasErrors('vagas') ? 'true' : null}">
+        <p class="campo__erro" th:if="${#fields.hasErrors('vagas')}" th:errors="*{vagas}">Erro</p>
+      </div>
+      <div class="campo">
+        <label class="campo__rotulo" for="situacao" th:text="#{contratos.situacao}">Situação</label>
+        <select class="entrada" id="situacao" th:field="*{situacao}">
+          <option th:each="s : ${situacoes}" th:value="${s}" th:text="${s.descricao}">Ativo</option>
+        </select>
+        <p class="campo__erro" th:if="${#fields.hasErrors('situacao')}" th:errors="*{situacao}">Erro</p>
+      </div>
+    </div>
+    <div class="linha-de-campos">
+      <div class="campo">
+        <label class="campo__rotulo" for="inicio" th:text="#{contratos.inicio}">Início</label>
+        <input class="entrada" id="inicio" type="date" th:field="*{inicio}" required>
+        <p class="campo__erro" th:if="${#fields.hasErrors('inicio')}" th:errors="*{inicio}">Erro</p>
+      </div>
+      <div class="campo">
+        <label class="campo__rotulo" for="fim" th:text="#{contratos.fim}">Fim</label>
+        <input class="entrada" id="fim" type="date" th:field="*{fim}">
+        <p class="campo__erro" th:if="${#fields.hasErrors('fim')}" th:errors="*{fim}">Erro</p>
+      </div>
+    </div>
+    <p class="apoio" th:text="#{contratos.regra}">Regra.</p>
+    <div class="campo">
+      <label class="campo__rotulo" for="senha" th:text="#{global.senha-confirmacao}">Sua senha</label>
+      <input class="entrada" id="senha" type="password" name="senha" autocomplete="current-password" required
+             th:attr="aria-invalid=${#fields.hasErrors('senha') ? 'true' : null}">
+      <p class="campo__ajuda" th:text="#{global.senha-confirmacao.ajuda}">Ação grave.</p>
+      <p class="campo__erro" th:if="${#fields.hasErrors('senha')}" th:errors="*{senha}">Erro</p>
+    </div>
+    <div class="acoes">
+      <button class="botao" type="submit" th:text="#{contratos.salvar}">Salvar contrato</button>
+      <a class="botao botao--texto" th:href="@{/clientes/{id}(id=${clienteId})}" th:text="#{global.cancelar}">Cancelar</a>
+    </div>
+  </form>
+</main>
+
+<th:block th:replace="~{global/global :: rodape}"></th:block>
+</body>
+</html>

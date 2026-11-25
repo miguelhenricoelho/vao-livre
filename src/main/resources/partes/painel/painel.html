@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{global/global :: cabeca(#{painel.titulo}, ~{::link}, ~{})}">
+  <link rel="stylesheet" href="/painel/painel.css">
+</head>
+<body>
+<th:block th:replace="~{global/global :: topo}"></th:block>
+
+<main class="conteudo" id="conteudo" tabindex="-1" th:with="p=${painel}">
+  <header class="cabecalho">
+    <p class="cabecalho__rotulo" th:text="${hoje}">25/11/2026</p>
+    <h1 class="cabecalho__titulo" th:text="#{painel.titulo}">Painel</h1>
+    <div class="cabecalho__acoes">
+      <a class="botao" th:href="@{/clientes/novo}" th:text="#{painel.novo-cliente}">Cadastrar cliente</a>
+      <a class="botao botao--contorno" th:href="@{/portaria}" th:text="#{painel.ir-portaria}">Ir para a portaria</a>
+    </div>
+  </header>
+
+  <th:block th:replace="~{global/global :: avisos}"></th:block>
+
+  <p class="aviso aviso--erro" role="alert" th:if="${p.contratosAcimaDoLimite() > 0}"
+     th:text="#{painel.acima-do-limite(${p.contratosAcimaDoLimite()})}">Contrato acima do limite.</p>
+
+  <dl class="numeros">
+    <div class="numeros__item">
+      <dt th:text="#{painel.no-patio}">No pátio agora</dt>
+      <dd class="numero" th:text="${p.noPatio()}">12</dd>
+    </div>
+    <div class="numeros__item" th:classappend="${p.clientesNoLimite() > 0} ? 'numeros__item--alerta'">
+      <dt th:text="#{painel.no-limite}">Clientes no limite</dt>
+      <dd class="numero" th:text="${p.clientesNoLimite()}">2</dd>
+    </div>
+    <div class="numeros__item" th:classappend="${p.bloqueiosHoje() > 0} ? 'numeros__item--alerta'">
+      <dt th:text="#{painel.bloqueios}">Bloqueios hoje</dt>
+      <dd class="numero" th:text="${p.bloqueiosHoje()}">3</dd>
+    </div>
+    <div class="numeros__item">
+      <dt th:text="#{painel.registros}">Registros hoje</dt>
+      <dd class="numero" th:text="${p.registrosHoje()}">40</dd>
+    </div>
+    <div class="numeros__item">
+      <dt th:text="#{painel.vencendo}">Contratos vencendo em 30 dias</dt>
+      <dd class="numero" th:text="${p.contratosVencendo()}">1</dd>
+    </div>
+  </dl>
+
+  <section class="secao" aria-labelledby="titulo-ocupacao">
+    <h2 class="secao__rotulo" id="titulo-ocupacao">
+      <span class="secao__numero" th:text="#{painel.ocupacao.apoio}">Mais cheios primeiro</span>
+      <span th:text="#{painel.ocupacao}">Ocupação por cliente</span>
+    </h2>
+    <div class="secao__corpo">
+      <ul class="ocupacao" th:if="${!#lists.isEmpty(p.linhas())}">
+        <li class="ocupacao__linha" th:each="l : ${p.linhas()}">
+          <a class="ocupacao__cliente" th:href="@{/clientes/{id}(id=${l.clienteId()})}" th:text="${l.cliente()}">Cliente</a>
+          <div class="pontos" th:classappend="${l.cheio()} ? 'pontos--cheio'" aria-hidden="true">
+            <span th:each="ocupada : ${l.pontos()}" class="pontos__ponto" th:classappend="${ocupada} ? 'pontos__ponto--ocupada'"></span>
+          </div>
+          <p class="ocupacao__numeros numero" th:classappend="${l.cheio()} ? 'ocupacao__numeros--cheio'"
+             th:text="#{painel.contador(${l.emUso()}, ${l.vagas()})}">4 de 5</p>
+          <p class="ocupacao__nota">
+            <span th:if="${l.suspenso()}" class="selo selo--alerta" th:text="#{painel.suspenso}">Suspenso</span>
+            <span th:if="${l.venceEm() != null}" class="selo selo--neutro" th:text="#{painel.vence(${l.venceEm()})}">Vence</span>
+          </p>
+        </li>
+      </ul>
+      <p class="tabela__vazia" th:if="${#lists.isEmpty(p.linhas())}">
+        <span th:text="#{painel.vazio}">Nenhum contrato vigente.</span>
+        <a th:href="@{/clientes/novo}" th:text="#{painel.novo-cliente}">Cadastrar cliente</a>
+      </p>
+    </div>
+  </section>
+</main>
+
+<th:block th:replace="~{global/global :: rodape}"></th:block>
+</body>
+</html>

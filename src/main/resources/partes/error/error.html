@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org"
+      th:with="tipo=${status == 404 ? '404' : (status == 403 ? '403' : 'outro')}">
+<head th:replace="~{global/global :: cabeca(#{'erro.' + ${tipo} + '.titulo'}, ~{::link}, ~{})}">
+  <link rel="stylesheet" href="/acesso/acesso.css">
+</head>
+<body class="acesso">
+  <main class="acesso__painel" id="conteudo">
+    <p class="marca acesso__marca">
+      <svg th:replace="~{global/global :: simbolo}"></svg>
+      <span>Vão Livre</span>
+    </p>
+    <p class="acesso__passo numero" th:text="#{erro.codigo(${status})}">Erro 404</p>
+    <h1 class="acesso__titulo" th:text="#{'erro.' + ${tipo} + '.titulo'}">Esta página não existe</h1>
+    <p class="acesso__apoio" th:text="#{'erro.' + ${tipo} + '.texto'}">Texto</p>
+    <a class="botao acesso__botao" th:href="@{/}" th:text="#{erro.voltar}">Voltar para o início</a>
+  </main>
+  <div class="acesso__pauta" aria-hidden="true">
+    <p class="acesso__lema" th:text="#{acesso.lema}">Só entra quem tem vaga.</p>
+  </div>
+</body>
+</html>

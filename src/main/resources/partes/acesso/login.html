@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{global/global :: cabeca(#{acesso.login.titulo}, ~{::link}, ~{})}">
+  <link rel="stylesheet" href="/acesso/acesso.css">
+</head>
+<body class="acesso">
+  <main class="acesso__painel" id="conteudo">
+    <p class="marca acesso__marca">
+      <svg th:replace="~{global/global :: simbolo}"></svg>
+      <span>Vão Livre</span>
+    </p>
+
+    <p class="acesso__passo numero" th:text="#{acesso.passo(2)}">Passo 2 de 2</p>
+    <h1 class="acesso__titulo" th:text="#{acesso.login.titulo}">Entrar</h1>
+    <p class="acesso__apoio" th:text="#{acesso.login.apoio}">Texto</p>
+
+    <p class="aviso aviso--erro" role="alert" th:if="${param.erro}" th:text="#{acesso.login.errado}">E-mail ou senha incorretos.</p>
+    <p class="aviso aviso--erro" role="alert" th:if="${param.bloqueado}" th:text="#{acesso.login.bloqueado}">Muitas tentativas.</p>
+
+    <form class="formulario" th:action="@{/login}" method="post">
+      <div class="campo">
+        <label class="campo__rotulo" for="email" th:text="#{acesso.email}">E-mail</label>
+        <input class="entrada" id="email" name="email" type="email" inputmode="email" autocomplete="username" required>
+      </div>
+      <div class="campo">
+        <label class="campo__rotulo" for="senha" th:text="#{acesso.senha}">Senha</label>
+        <input class="entrada" id="senha" name="senha" type="password" autocomplete="current-password" required>
+      </div>
+      <button class="botao acesso__botao" type="submit" th:text="#{acesso.login.entrar}">Entrar no sistema</button>
+    </form>
+    <p class="acesso__nota" th:text="#{acesso.login.esqueceu}">Esqueceu a senha?</p>
+  </main>
+  <div class="acesso__pauta" aria-hidden="true">
+    <p class="acesso__lema" th:text="#{acesso.lema}">Só entra quem tem vaga.</p>
+  </div>
+</body>
+</html>

@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{global/global :: cabeca(#{equipe.titulo}, ~{::link}, ~{::script})}">
+  <link rel="stylesheet" href="/equipe/equipe.css">
+  <script src="/clientes/clientes.js" defer></script>
+</head>
+<body>
+<th:block th:replace="~{global/global :: topo}"></th:block>
+
+<main class="conteudo" id="conteudo" tabindex="-1">
+  <header class="cabecalho">
+    <h1 class="cabecalho__titulo" th:text="#{equipe.titulo}">Equipe</h1>
+    <p class="cabecalho__apoio" th:text="#{equipe.apoio}">Contas criadas pelo administrador.</p>
+  </header>
+
+  <th:block th:replace="~{global/global :: avisos}"></th:block>
+
+  <section class="secao" aria-labelledby="titulo-membros">
+    <h2 class="secao__rotulo" id="titulo-membros" th:text="#{equipe.pessoas}">Pessoas</h2>
+    <ul class="secao__corpo membros">
+      <li class="membro" th:each="m : ${membros}">
+        <div class="membro__dados">
+          <p class="membro__nome">
+            <span th:text="${m.nome()}">Nome</span>
+            <span th:unless="${m.ativo()}" class="selo selo--alerta" th:text="#{equipe.desativada}">Desativada</span>
+            <span th:if="${m.senhaTemporaria()}" class="selo selo--neutro" th:text="#{equipe.temporaria}">Senha temporária</span>
+          </p>
+          <p class="apoio" th:text="|${m.email()} · ${m.papel().descricao}|">email · papel</p>
+        </div>
+        <details class="membro__acoes" th:if="${m.id() != eu.id}">
+          <summary class="botao botao--contorno" th:text="#{equipe.gerenciar}">Gerenciar</summary>
+          <div class="membro__formularios">
+            <form class="formulario" th:action="@{/equipe/{id}/papel(id=${m.id()})}" method="post">
+              <div class="campo">
+                <label class="campo__rotulo" th:for="|papel-${m.id()}|" th:text="#{equipe.papel}">Papel</label>
+                <select class="entrada" th:id="|papel-${m.id()}|" name="papel">
+                  <option th:each="p : ${papeis}" th:value="${p}" th:text="${p.descricao}" th:selected="${p == m.papel()}">Papel</option>
+                </select>
+              </div>
+              <div class="campo">
+                <label class="campo__rotulo" th:for="|senha-papel-${m.id()}|" th:text="#{global.senha-confirmacao}">Sua senha</label>
+                <input class="entrada" th:id="|senha-papel-${m.id()}|" name="senha" type="password" autocomplete="current-password" required>
+              </div>
+              <div><button class="botao botao--contorno" type="submit" th:text="#{equipe.mudar-papel}">Mudar papel</button></div>
+            </form>
+
+            <form class="formulario" th:action="@{/equipe/{id}/senha(id=${m.id()})}" method="post">
+              <div class="campo">
+                <label class="campo__rotulo" th:for="|temporaria-${m.id()}|" th:text="#{equipe.nova-temporaria}">Nova senha temporária</label>
+                <input class="entrada" th:id="|temporaria-${m.id()}|" name="temporaria" type="text" autocomplete="off" minlength="10" required>
+              </div>
+              <div class="campo">
+                <label class="campo__rotulo" th:for="|senha-redefinir-${m.id()}|" th:text="#{global.senha-confirmacao}">Sua senha</label>
+                <input class="entrada" th:id="|senha-redefinir-${m.id()}|" name="senha" type="password" autocomplete="current-password" required>
+              </div>
+              <div><button class="botao botao--contorno" type="submit" th:text="#{equipe.redefinir}">Redefinir senha</button></div>
+            </form>
+
+            <form th:if="${m.ativo()}" class="formulario" th:action="@{/equipe/{id}/desativar(id=${m.id()})}" method="post">
+              <div class="campo">
+                <label class="campo__rotulo" th:for="|senha-desativar-${m.id()}|" th:text="#{global.senha-confirmacao}">Sua senha</label>
+                <input class="entrada" th:id="|senha-desativar-${m.id()}|" name="senha" type="password" autocomplete="current-password" required>
+              </div>
+              <div><button class="botao botao--alerta" type="submit" th:text="#{equipe.desativar}">Desativar conta</button></div>
+            </form>
+            <form th:unless="${m.ativo()}" th:action="@{/equipe/{id}/reativar(id=${m.id()})}" method="post">
+              <button class="botao" type="submit" th:text="#{equipe.reativar}">Reativar conta</button>
+            </form>
+          </div>
+        </details>
+        <p th:if="${m.id() == eu.id}" class="apoio" th:text="#{equipe.voce}">Você</p>
+      </li>
+    </ul>
+  </section>
+
+  <section class="secao" aria-labelledby="titulo-nova">
+    <h2 class="secao__rotulo" id="titulo-nova" th:text="#{equipe.nova}">Nova pessoa</h2>
+    <form class="secao__corpo formulario" th:action="@{/equipe}" th:object="${form}" method="post" novalidate>
+      <div class="linha-de-campos">
+        <div class="campo">
+          <label class="campo__rotulo" for="nome" th:text="#{equipe.nome}">Nome</label>
+          <input class="entrada" id="nome" type="text" th:field="*{nome}" required
+                 th:attr="aria-invalid=${#fields.hasErrors('nome') ? 'true' : null}">
+          <p class="campo__erro" th:if="${#fields.hasErrors('nome')}" th:errors="*{nome}">Erro</p>
+        </div>
+        <div class="campo">
+          <label class="campo__rotulo" for="email" th:text="#{equipe.email}">E-mail</label>
+          <input class="entrada" id="email" type="email" inputmode="email" th:field="*{email}" required
+                 th:attr="aria-invalid=${#fields.hasErrors('email') ? 'true' : null}">
+          <p class="campo__erro" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Erro</p>
+        </div>
+      </div>
+      <div class="linha-de-campos">
+        <div class="campo">
+          <label class="campo__rotulo" for="papel" th:text="#{equipe.papel}">Papel</label>
+          <select class="entrada" id="papel" th:field="*{papel}">
+            <option th:each="p : ${papeis}" th:value="${p}" th:text="${p.descricao}">Papel</option>
+          </select>
+        </div>
+        <div class="campo">
+          <label class="campo__rotulo" for="senhaTemporaria" th:text="#{equipe.temporaria-rotulo}">Senha temporária</label>
+          <input class="entrada" id="senhaTemporaria" type="text" autocomplete="off" th:field="*{senhaTemporaria}" required
+                 th:attr="aria-invalid=${#fields.hasErrors('senhaTemporaria') ? 'true' : null}">
+          <p class="campo__ajuda" th:text="#{equipe.temporaria-ajuda}">A pessoa troca no primeiro acesso.</p>
+          <p class="campo__erro" th:if="${#fields.hasErrors('senhaTemporaria')}" th:errors="*{senhaTemporaria}">Erro</p>
+        </div>
+      </div>
+      <div><button class="botao" type="submit" th:text="#{equipe.criar}">Criar conta</button></div>
+    </form>
+  </section>
+
+  <section class="secao" aria-labelledby="titulo-area">
+    <h2 class="secao__rotulo" id="titulo-area" th:text="#{equipe.area}">Senha da área</h2>
+    <form class="secao__corpo formulario" th:action="@{/equipe/senha-da-area}" method="post">
+      <p class="apoio" th:text="#{equipe.area.apoio}">Trocar desconecta todo mundo.</p>
+      <div class="campo">
+        <label class="campo__rotulo" for="nova-area" th:text="#{equipe.area.nova}">Nova senha da área</label>
+        <input class="entrada" id="nova-area" name="nova" type="password" autocomplete="new-password" minlength="10" required>
+      </div>
+      <div class="campo">
+        <label class="campo__rotulo" for="senha-area" th:text="#{global.senha-confirmacao}">Sua senha</label>
+        <input class="entrada" id="senha-area" name="senha" type="password" autocomplete="current-password" required>
+      </div>
+      <div><button class="botao botao--alerta" type="submit" th:text="#{equipe.area.trocar}">Trocar a senha da área</button></div>
+    </form>
+  </section>
+
+  <section class="secao" aria-labelledby="titulo-suporte">
+    <h2 class="secao__rotulo" id="titulo-suporte" th:text="#{equipe.suporte}">WhatsApp do suporte</h2>
+    <form class="secao__corpo formulario" th:action="@{/equipe/whatsapp}" method="post">
+      <p class="apoio" th:text="#{equipe.suporte.apoio}">Usado no botão de ajuda.</p>
+      <div class="campo">
+        <label class="campo__rotulo" for="numero" th:text="#{equipe.suporte.numero}">Número com DDD</label>
+        <input class="entrada numero" id="numero" name="numero" type="tel" inputmode="tel" th:value="${whatsapp}" data-mascara="telefone">
+      </div>
+      <div><button class="botao botao--contorno" type="submit" th:text="#{global.salvar}">Salvar</button></div>
+    </form>
+  </section>
+</main>
+
+<th:block th:replace="~{global/global :: rodape}"></th:block>
+</body>
+</html>

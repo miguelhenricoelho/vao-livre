@@ -1,0 +1,82 @@
+/* Painel: os números do dia e a ocupação de cada cliente em pontos. */
+
+.numeros {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border-top: var(--linha-forte);
+  margin-bottom: var(--esp-6);
+}
+
+.numeros__item {
+  display: grid;
+  gap: var(--esp-1);
+  align-content: start;
+  padding: var(--esp-4) var(--esp-3) var(--esp-4) 0;
+  border-bottom: var(--linha);
+}
+
+.numeros__item dt {
+  font-size: var(--tam-rotulo);
+  font-weight: var(--peso-medio);
+  color: var(--cor-tinta-2);
+}
+
+.numeros__item dd {
+  font-family: var(--fonte-titulo);
+  font-stretch: var(--largura-titulo);
+  font-weight: var(--peso-forte);
+  font-size: var(--tam-destaque);
+  line-height: 1;
+}
+
+.numeros__item--alerta dd {
+  color: var(--cor-sinal-escuro);
+}
+
+.ocupacao {
+  display: grid;
+}
+
+.ocupacao__linha {
+  display: grid;
+  gap: var(--esp-2);
+  padding: var(--esp-3) 0;
+  border-bottom: var(--linha);
+}
+
+.ocupacao__cliente {
+  font-weight: var(--peso-medio);
+}
+
+.ocupacao__numeros--cheio {
+  color: var(--cor-sinal-escuro);
+  font-weight: var(--peso-medio);
+}
+
+.ocupacao__nota {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-3);
+}
+
+@media (min-width: 48em) {
+  .numeros {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+
+  .numeros__item {
+    padding-left: var(--esp-3);
+    border-left: var(--linha);
+  }
+
+  .numeros__item:first-child {
+    padding-left: 0;
+    border-left: 0;
+  }
+
+  .ocupacao__linha {
+    grid-template-columns: minmax(12rem, 4fr) minmax(0, 5fr) minmax(7rem, 2fr) minmax(8rem, 2fr);
+    align-items: center;
+    gap: var(--esp-4);
+  }
+}

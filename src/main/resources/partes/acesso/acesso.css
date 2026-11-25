@@ -1,0 +1,84 @@
+/* Senha da área e login: a página como a folha de rosto do livro de portaria. */
+
+.acesso {
+  display: grid;
+  min-height: 100dvh;
+}
+
+.acesso__painel {
+  display: grid;
+  align-content: center;
+  gap: var(--esp-3);
+  width: 100%;
+  max-width: 30rem;
+  margin: 0 auto;
+  padding: var(--esp-7) var(--esp-4);
+}
+
+.acesso__marca {
+  margin-bottom: var(--esp-6);
+}
+
+.acesso__passo {
+  font-family: var(--fonte-placa);
+  font-size: var(--tam-rotulo);
+  letter-spacing: 0.06em;
+  color: var(--cor-tinta-2);
+}
+
+.acesso__titulo {
+  font-family: var(--fonte-titulo);
+  font-stretch: var(--largura-titulo);
+  font-weight: var(--peso-forte);
+  font-size: var(--tam-titulo-1);
+  line-height: 1.05;
+}
+
+.acesso__apoio,
+.acesso__nota {
+  color: var(--cor-tinta-2);
+}
+
+.acesso .formulario {
+  margin-top: var(--esp-3);
+}
+
+.acesso__botao {
+  width: 100%;
+}
+
+.acesso__pauta {
+  display: none;
+}
+
+@media (min-width: 64em) {
+  .acesso {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  }
+
+  .acesso__painel {
+    padding: var(--esp-8) var(--esp-7);
+  }
+
+  /* A pauta do livro: linhas finas e a margem em laranja, onde fica a cancela. */
+  .acesso__pauta {
+    display: flex;
+    align-items: flex-end;
+    padding: var(--esp-7);
+    border-left: var(--linha-forte);
+    background-color: var(--cor-papel-2);
+    background-image:
+      linear-gradient(90deg, transparent 5rem, var(--cor-sinal) 5rem, var(--cor-sinal) calc(5rem + 2px), transparent calc(5rem + 2px)),
+      repeating-linear-gradient(180deg, transparent 0, transparent 2.75rem, var(--cor-tinta-12) 2.75rem, var(--cor-tinta-12) calc(2.75rem + 1px));
+  }
+
+  .acesso__lema {
+    margin-left: 5.75rem;
+    font-family: var(--fonte-titulo);
+    font-stretch: var(--largura-titulo);
+    font-weight: var(--peso-forte);
+    font-size: var(--tam-titulo-1);
+    line-height: 1.1;
+    max-width: 16ch;
+  }
+}

@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{global/global :: cabeca(#{clientes.cadastro.titulo}, ~{::link}, ~{::script})}">
+  <link rel="stylesheet" href="/clientes/clientes.css">
+  <script src="/clientes/clientes.js" defer></script>
+</head>
+<body>
+<th:block th:replace="~{global/global :: topo}"></th:block>
+
+<main class="conteudo" id="conteudo" tabindex="-1">
+  <header class="cabecalho">
+    <p class="cabecalho__rotulo"><a th:href="@{/clientes}" th:text="#{clientes.titulo}">Clientes</a> / <span th:text="#{clientes.cadastro.rotulo}">Novo</span></p>
+    <h1 class="cabecalho__titulo" th:text="#{clientes.cadastro.titulo}">Cadastrar cliente</h1>
+    <p class="cabecalho__apoio" th:text="#{clientes.cadastro.apoio}">Cliente, contrato e veículos numa tela só.</p>
+  </header>
+
+  <form th:action="@{/clientes/novo}" th:object="${form}" method="post" novalidate>
+    <p class="aviso aviso--erro" role="alert" th:if="${#fields.hasErrors('*')}" th:text="#{clientes.cadastro.erros}">Confira os campos marcados.</p>
+
+    <section class="secao">
+      <h2 class="secao__rotulo"><span class="secao__numero">01</span><span th:text="#{clientes.secao.cliente}">Cliente</span></h2>
+      <div class="secao__corpo">
+        <fieldset class="escolha">
+          <legend class="campo__rotulo" th:text="#{clientes.tipo}">Tipo</legend>
+          <label class="marcador" th:each="t : ${tipos}">
+            <input type="radio" th:field="*{cliente.tipo}" th:value="${t}" data-tipo-cliente>
+            <span th:text="${t.descricao}">PJ</span>
+          </label>
+        </fieldset>
+        <div class="linha-de-campos">
+          <div class="campo">
+            <label class="campo__rotulo" for="nome" th:text="#{clientes.nome}">Nome ou razão social</label>
+            <input class="entrada" id="nome" type="text" th:field="*{cliente.nome}" required autocomplete="organization"
+                   th:attr="aria-invalid=${#fields.hasErrors('cliente.nome') ? 'true' : null}">
+            <p class="campo__erro" th:if="${#fields.hasErrors('cliente.nome')}" th:errors="*{cliente.nome}">Erro</p>
+          </div>
+          <div class="campo">
+            <label class="campo__rotulo" for="documento" th:text="#{clientes.documento}">CPF ou CNPJ</label>
+            <input class="entrada numero" id="documento" type="text" inputmode="numeric" th:field="*{cliente.documento}" required data-mascara="documento"
+                   th:attr="aria-invalid=${#fields.hasErrors('cliente.documento') ? 'true' : null}">
+            <p class="campo__erro" th:if="${#fields.hasErrors('cliente.documento')}" th:errors="*{cliente.documento}">Erro</p>
+          </div>
+        </div>
+        <div class="linha-de-campos">
+          <div class="campo">
+            <label class="campo__rotulo" for="responsavel" th:text="#{clientes.responsavel}">Responsável</label>
+            <input class="entrada" id="responsavel" type="text" th:field="*{cliente.responsavel}" autocomplete="name">
+          </div>
+          <div class="campo">
+            <label class="campo__rotulo" for="telefone" th:text="#{clientes.telefone}">WhatsApp</label>
+            <input class="entrada numero" id="telefone" type="tel" inputmode="tel" th:field="*{cliente.telefone}" autocomplete="tel" data-mascara="telefone"
+                   th:attr="aria-invalid=${#fields.hasErrors('cliente.telefone') ? 'true' : null}">
+            <p class="campo__erro" th:if="${#fields.hasErrors('cliente.telefone')}" th:errors="*{cliente.telefone}">Erro</p>
+          </div>
+          <div class="campo">
+            <label class="campo__rotulo" for="email" th:text="#{clientes.email}">E-mail</label>
+            <input class="entrada" id="email" type="email" inputmode="email" th:field="*{cliente.email}" autocomplete="email"
+                   th:attr="aria-invalid=${#fields.hasErrors('cliente.email') ? 'true' : null}">
+            <p class="campo__erro" th:if="${#fields.hasErrors('cliente.email')}" th:errors="*{cliente.email}">Erro</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="secao">
+      <h2 class="secao__rotulo"><span class="secao__numero">02</span><span th:text="#{clientes.secao.contrato}">Contrato</span></h2>
+      <div class="secao__corpo">
+        <div class="linha-de-campos">
+          <div class="campo">
+            <label class="campo__rotulo" for="vagas" th:text="#{clientes.vagas}">Vagas contratadas</label>
+            <input class="entrada numero" id="vagas" type="number" min="1" max="500" inputmode="numeric" th:field="*{vagas}" required
+                   th:attr="aria-invalid=${#fields.hasErrors('vagas') ? 'true' : null}">
+            <p class="campo__erro" th:if="${#fields.hasErrors('vagas')}" th:errors="*{vagas}">Erro</p>
+          </div>
+          <div class="campo">
+            <label class="campo__rotulo" for="inicio" th:text="#{clientes.inicio}">Início</label>
+            <input class="entrada" id="inicio" type="date" th:field="*{inicio}" required>
+            <p class="campo__erro" th:if="${#fields.hasErrors('inicio')}" th:errors="*{inicio}">Erro</p>
+          </div>
+          <div class="campo">
+            <label class="campo__rotulo" for="fim" th:text="#{clientes.fim}">Fim (opcional)</label>
+            <input class="entrada" id="fim" type="date" th:field="*{fim}">
+            <p class="campo__erro" th:if="${#fields.hasErrors('fim')}" th:errors="*{fim}">Erro</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="secao">
+      <h2 class="secao__rotulo"><span class="secao__numero">03</span><span th:text="#{clientes.secao.veiculos}">Veículos</span></h2>
+      <div class="secao__corpo">
+        <p class="apoio" th:text="#{clientes.veiculos.apoio}">Linhas em branco são ignoradas.</p>
+        <p class="campo__erro" th:if="${#fields.hasErrors('veiculos')}" th:errors="*{veiculos}">Erro</p>
+        <ol class="veiculos-novos">
+          <li class="veiculos-novos__linha" th:each="v, i : *{veiculos}">
+            <span class="veiculos-novos__numero numero" th:text="${i.count}">1</span>
+            <div class="campo">
+              <label class="campo__rotulo" th:for="|placa-${i.index}|" th:text="#{clientes.placa}">Placa</label>
+              <input class="entrada placa" th:id="|placa-${i.index}|" type="text" th:field="*{veiculos[__${i.index}__].placa}"
+                     autocapitalize="characters" autocomplete="off" maxlength="8" data-mascara="placa">
+              <p class="campo__erro" th:if="${#fields.hasErrors('veiculos[__${i.index}__].placa')}" th:errors="*{veiculos[__${i.index}__].placa}">Erro</p>
+            </div>
+            <div class="campo">
+              <label class="campo__rotulo" th:for="|modelo-${i.index}|" th:text="#{clientes.modelo}">Modelo</label>
+              <input class="entrada" th:id="|modelo-${i.index}|" type="text" th:field="*{veiculos[__${i.index}__].modelo}">
+            </div>
+            <div class="campo">
+              <label class="campo__rotulo" th:for="|cor-${i.index}|" th:text="#{clientes.cor}">Cor</label>
+              <input class="entrada" th:id="|cor-${i.index}|" type="text" th:field="*{veiculos[__${i.index}__].cor}">
+            </div>
+          </li>
+        </ol>
+        <div>
+          <button class="botao botao--contorno" type="submit" name="acao" value="mais-linhas" formnovalidate th:text="#{clientes.mais-linhas}">Mais linhas de veículo</button>
+        </div>
+      </div>
+    </section>
+
+    <div class="acoes formulario__fim">
+      <button class="botao" type="submit" name="acao" value="salvar" th:text="#{clientes.salvar}">Salvar cliente e veículos</button>
+      <a class="botao botao--texto" th:href="@{/clientes}" th:text="#{global.cancelar}">Cancelar</a>
+    </div>
+  </form>
+</main>
+
+<th:block th:replace="~{global/global :: rodape}"></th:block>
+</body>
+</html>

@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<body>
+<!-- A garagem do cliente. Também usada, parada, na ficha do cliente. -->
+<div th:fragment="quadro(q, liberado)" class="garagem" th:classappend="${q.cheio} ? 'garagem--cheia'">
+  <div class="garagem__cabecalho">
+    <p class="garagem__titulo" th:text="${q.titulo() == '' ? #messages.msg('portaria.garagem') : #messages.msg('portaria.garagem.de', q.titulo())}">Garagem</p>
+    <p class="garagem__contador" th:if="${q.vagas() > 0}"
+       th:classappend="${q.manobra() != null and !q.manobra().isBloqueio()} ? 'garagem__contador--mudou'">
+      <span class="garagem__contador-texto numero" th:text="#{portaria.contador(${q.emUso()}, ${q.vagas()})}">5 de 5 vagas em uso</span>
+    </p>
+  </div>
+
+  <svg class="garagem__planta" role="img"
+       th:attr="viewBox=|0 0 ${q.largura()} ${q.altura()}|,
+                aria-label=#{portaria.garagem.descricao(${q.emUso()}, ${q.vagas()})},
+                data-manobra=${q.manobra()?.tipo()},
+                data-destino-x=${q.manobra()?.destinoX()},
+                data-destino-y=${q.manobra()?.destinoY()},
+                data-corredor-y=${q.manobra()?.corredorY()},
+                data-faixa-x=${q.faixaLivreX()}">
+    <defs>
+      <g id="garagem-carro">
+        <rect x="-40" y="-18" width="80" height="36" rx="8"/>
+        <path d="M13 -14 Q18 0 13 14 M-23 -13 Q-26 0 -23 13 M13 -14 H-23 M13 14 H-23"/>
+      </g>
+    </defs>
+
+    <line class="garagem__margem" th:attr="x1=${q.cancelaX()}, x2=${q.cancelaX()}, y2=${q.altura()}" y1="0"/>
+
+    <th:block th:each="f : ${q.fileiras()}">
+      <line class="garagem__faixa" th:attr="x1=${q.cancelaX()}, y1=${f.faixaY()}, x2=${q.largura() - 12}, y2=${f.faixaY()}"/>
+      <line th:each="x : ${f.divisorias()}" class="garagem__demarcacao" th:attr="x1=${x}, x2=${x}, y1=${f.topo()}, y2=${f.base()}"/>
+      <line class="garagem__demarcacao" th:attr="x1=${f.divisorias()[0]}, x2=${f.divisorias()[#lists.size(f.divisorias()) - 1]}, y1=${f.base()}, y2=${f.base()}"/>
+    </th:block>
+
+    <th:block th:each="v : ${q.lista()}">
+      <rect th:if="${v.destaque()}" class="garagem__destaque" data-destaque
+            th:attr="x=${v.x() + 3}, y=${v.centroY() - 57}, width=58, height=114" rx="2"/>
+      <text class="garagem__numero" text-anchor="middle" th:attr="x=${v.centroX()}, y=${v.numeroY()}" th:text="${v.numero()}">1</text>
+      <g th:if="${v.ocupada()}" class="garagem__carro"
+         th:classappend="${v.destaque()} ? 'garagem__carro--manobra'"
+         th:attr="transform=|translate(${v.centroX()} ${v.centroY()}) rotate(90)|, data-carro-manobra=${v.destaque() ? '' : null}">
+        <use href="#garagem-carro"/>
+      </g>
+    </th:block>
+
+    <th:block th:if="${q.manobra() != null and q.manobra().isBloqueio()}">
+      <rect class="garagem__espera" data-destaque x="4" y="10" th:attr="width=${q.cancelaX() - 10}" height="60" rx="2"/>
+      <g class="garagem__carro garagem__carro--barrado" data-carro-manobra transform="translate(48 40) rotate(0)">
+        <use href="#garagem-carro"/>
+      </g>
+      <g transform="translate(14 64) rotate(-22)"><line class="garagem__risco" data-risco x1="0" y1="0" x2="108" y2="0"/></g>
+    </th:block>
+
+    <g th:if="${q.manobra() != null and q.manobra().tipo() == 'saida'}" class="garagem__carro garagem__carro--manobra"
+       data-carro-manobra transform="translate(-60 40) rotate(180)" opacity="0">
+      <use href="#garagem-carro"/>
+    </g>
+
+    <g th:attr="transform=|translate(${q.cancelaX()} ${q.cancelaY()})|">
+      <line class="garagem__braco" data-cancela x1="0" y1="0" x2="0" y2="-68"/>
+      <line class="garagem__braco-faixas" data-cancela-faixas x1="0" y1="-6" x2="0" y2="-68"/>
+      <circle class="garagem__pivo" r="5"/>
+    </g>
+  </svg>
+
+  <ol class="garagem__legenda" th:if="${q.vagas() > 0}" th:attr="aria-label=#{portaria.garagem.vagas}">
+    <li th:each="v : ${q.lista()}" class="garagem__item" th:classappend="${v.destaque()} ? 'garagem__item--novo'">
+      <span class="garagem__vaga numero" th:text="${v.numero()}">1</span>
+      <th:block th:if="${v.ocupada()}">
+        <span class="placa" th:text="${v.placa()}">BRA2E19</span>
+        <span class="apoio" th:text="#{portaria.desde(${v.desde()})}">desde 07:42</span>
+      </th:block>
+      <span th:unless="${v.ocupada()}" class="apoio" th:text="#{portaria.livre}">Livre</span>
+    </li>
+  </ol>
+</div>
+</body>
+</html>

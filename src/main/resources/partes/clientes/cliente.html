@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{global/global :: cabeca(${ficha.nome()}, ~{::link}, ~{})}">
+  <link rel="stylesheet" href="/portaria/portaria.css">
+  <link rel="stylesheet" href="/clientes/clientes.css">
+</head>
+<body>
+<th:block th:replace="~{global/global :: topo}"></th:block>
+
+<main class="conteudo" id="conteudo" tabindex="-1" th:with="f=${ficha}">
+  <header class="cabecalho">
+    <p class="cabecalho__rotulo"><a th:href="@{/clientes}" th:text="#{clientes.titulo}">Clientes</a> / <span th:text="${f.tipo()}">PJ</span></p>
+    <h1 class="cabecalho__titulo" th:text="${f.nome()}">Construtora Alfa</h1>
+    <p class="cabecalho__apoio">
+      <span class="numero" th:text="${f.documento()}">00.000.000/0001-00</span> ·
+      <span th:text="#{clientes.desde(${f.clienteDesde()})}">cliente desde</span>
+      <span th:unless="${f.ativo()}" class="selo selo--alerta" th:text="#{clientes.desativado}">Desativado</span>
+    </p>
+    <div class="cabecalho__acoes">
+      <a class="botao botao--contorno" th:href="@{/clientes/{id}/editar(id=${f.id()})}" th:text="#{clientes.editar}">Editar dados</a>
+      <a class="botao botao--contorno" th:href="@{/veiculos(cliente=${f.id()})}" th:text="#{clientes.cadastrar-veiculo}">Cadastrar veículo</a>
+    </div>
+  </header>
+
+  <th:block th:replace="~{global/global :: avisos}"></th:block>
+  <p class="aviso" role="status" th:if="${param.cadastrado}" th:text="#{clientes.aviso.cadastrado}">Cadastrado.</p>
+  <p class="aviso" role="status" th:if="${param.salvo}" th:text="#{clientes.aviso.salvo}">Salvo.</p>
+  <p class="aviso" role="status" th:if="${param.contrato}" th:text="#{clientes.aviso.contrato}">Contrato salvo.</p>
+
+  <div class="ficha">
+    <div class="ficha__garagem">
+      <th:block th:if="${garagem}">
+        <div th:replace="~{portaria/quadro :: quadro(${garagem}, false)}"></div>
+      </th:block>
+      <p th:unless="${garagem}" class="aviso aviso--erro" th:text="#{clientes.sem-contrato}">Sem contrato vigente.</p>
+    </div>
+
+    <div class="ficha__lado">
+      <section class="ficha__bloco" aria-labelledby="titulo-contrato">
+        <h2 class="ficha__titulo" id="titulo-contrato" th:text="#{clientes.secao.contrato}">Contrato</h2>
+        <dl class="dados" th:if="${f.contrato()}">
+          <div><dt th:text="#{clientes.vagas}">Vagas contratadas</dt><dd class="dados__destaque numero" th:text="${f.contrato().vagas()}">5</dd></div>
+          <div><dt th:text="#{clientes.situacao}">Situação</dt><dd th:text="${f.contrato().situacao()}">Ativo</dd></div>
+          <div><dt th:text="#{clientes.vigencia}">Vigência</dt>
+            <dd class="numero" th:text="${f.contrato().fim() == null} ? #{clientes.vigencia.aberta(${f.contrato().inicio()})} : #{clientes.vigencia.periodo(${f.contrato().inicio()}, ${f.contrato().fim()})}">01/03/2025 a 28/02/2027</dd></div>
+        </dl>
+        <a class="botao botao--contorno" th:href="@{/contratos/{id}(id=${f.id()})}"
+           th:text="${f.contrato() == null} ? #{clientes.criar-contrato} : #{clientes.alterar-contrato}">Alterar vagas</a>
+      </section>
+
+      <section class="ficha__bloco" aria-labelledby="titulo-contato">
+        <h2 class="ficha__titulo" id="titulo-contato" th:text="#{clientes.secao.contato}">Contato</h2>
+        <dl class="dados">
+          <div th:if="${f.responsavel()}"><dt th:text="#{clientes.responsavel}">Responsável</dt><dd th:text="${f.responsavel()}">Marina</dd></div>
+          <div th:if="${f.telefone()}"><dt th:text="#{clientes.telefone}">WhatsApp</dt><dd class="numero" th:text="${f.telefone()}">(11) 90000-0001</dd></div>
+          <div th:if="${f.email()}"><dt th:text="#{clientes.email}">E-mail</dt><dd class="dados__quebra" th:text="${f.email()}">email</dd></div>
+        </dl>
+      </section>
+
+      <section class="ficha__bloco ficha__bloco--grave" aria-labelledby="titulo-situacao">
+        <h2 class="ficha__titulo" id="titulo-situacao" th:text="#{clientes.secao.situacao}">Situação do cadastro</h2>
+        <form th:if="${f.ativo()}" class="formulario" th:action="@{/clientes/{id}/desativar(id=${f.id()})}" method="post">
+          <p class="apoio" th:text="#{clientes.desativar.apoio}">Os veículos param de entrar.</p>
+          <div class="campo">
+            <label class="campo__rotulo" for="senha-desativar" th:text="#{global.senha-confirmacao}">Sua senha</label>
+            <input class="entrada" id="senha-desativar" name="senha" type="password" autocomplete="current-password" required>
+          </div>
+          <div><button class="botao botao--alerta" type="submit" th:text="#{clientes.desativar}">Desativar cliente</button></div>
+        </form>
+        <form th:unless="${f.ativo()}" th:action="@{/clientes/{id}/reativar(id=${f.id()})}" method="post">
+          <button class="botao" type="submit" th:text="#{clientes.reativar}">Reativar cliente</button>
+        </form>
+      </section>
+    </div>
+  </div>
+
+  <section class="secao" aria-labelledby="titulo-veiculos">
+    <h2 class="secao__rotulo" id="titulo-veiculos">
+      <span class="secao__numero" th:text="#{clientes.veiculos.total(${f.veiculosAtivos()})}">6 ativos</span>
+      <span th:text="#{clientes.secao.veiculos}">Veículos</span>
+    </h2>
+    <div class="secao__corpo rolagem" tabindex="0" role="region" aria-labelledby="titulo-veiculos">
+      <table class="tabela" th:if="${!#lists.isEmpty(f.veiculos())}">
+        <thead><tr>
+          <th scope="col" th:text="#{clientes.placa}">Placa</th>
+          <th scope="col" th:text="#{clientes.modelo}">Veículo</th>
+          <th scope="col" th:text="#{clientes.agora}">Agora</th>
+          <th scope="col"><span class="visualmente-oculto" th:text="#{clientes.acoes}">Ações</span></th>
+        </tr></thead>
+        <tbody>
+          <tr th:each="v : ${f.veiculos()}">
+            <td class="placa" th:text="${v.placa()}">BRA2E19</td>
+            <td th:text="${v.descricao()}">Carro</td>
+            <td>
+              <span th:if="${v.noPatio()}" class="selo" th:text="#{clientes.no-patio}">No pátio</span>
+              <span th:if="${!v.noPatio() and v.ativo()}" class="selo selo--neutro" th:text="#{clientes.fora}">Fora</span>
+              <span th:unless="${v.ativo()}" class="selo selo--alerta" th:text="#{clientes.desativado}">Desativado</span>
+            </td>
+            <td>
+              <form th:if="${v.ativo()}" th:action="@{/veiculos/{id}/desativar(id=${v.id()})}" method="post">
+                <button class="botao botao--texto" type="submit" th:text="#{clientes.desativar-veiculo}">Desativar</button>
+              </form>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="tabela__vazia" th:if="${#lists.isEmpty(f.veiculos())}">
+        <span th:text="#{clientes.sem-veiculos}">Nenhum veículo.</span>
+        <a th:href="@{/veiculos(cliente=${f.id()})}" th:text="#{clientes.cadastrar-veiculo}">Cadastrar veículo</a>
+      </p>
+    </div>
+  </section>
+</main>
+
+<th:block th:replace="~{global/global :: rodape}"></th:block>
+</body>
+</html>

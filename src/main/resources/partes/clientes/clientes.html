@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{global/global :: cabeca(#{clientes.titulo}, ~{::link}, ~{})}">
+  <link rel="stylesheet" href="/clientes/clientes.css">
+</head>
+<body>
+<th:block th:replace="~{global/global :: topo}"></th:block>
+
+<main class="conteudo" id="conteudo" tabindex="-1">
+  <header class="cabecalho">
+    <p class="cabecalho__rotulo" th:text="#{clientes.total(${pagina.totalElements})}">12 clientes</p>
+    <h1 class="cabecalho__titulo" th:text="#{clientes.titulo}">Clientes</h1>
+    <div class="cabecalho__acoes">
+      <a class="botao" th:href="@{/clientes/novo}" th:text="#{clientes.novo}">Cadastrar cliente</a>
+    </div>
+  </header>
+
+  <th:block th:replace="~{global/global :: avisos}"></th:block>
+
+  <form class="filtros" th:action="@{/clientes}" method="get" role="search">
+    <div class="campo filtros__busca">
+      <label class="campo__rotulo" for="busca" th:text="#{clientes.busca}">Nome, CPF ou CNPJ</label>
+      <input class="entrada" id="busca" name="busca" type="search" th:value="${busca}">
+    </div>
+    <div class="campo">
+      <label class="campo__rotulo" for="tipo" th:text="#{clientes.tipo}">Tipo</label>
+      <select class="entrada" id="tipo" name="tipo">
+        <option value="" th:text="#{clientes.tipo.todos}">Todos</option>
+        <option th:each="t : ${tipos}" th:value="${t}" th:text="${t.descricao}" th:selected="${t == tipo}">PJ</option>
+      </select>
+    </div>
+    <label class="marcador">
+      <input type="checkbox" name="inativos" value="true" th:checked="${inativos}">
+      <span th:text="#{clientes.inativos}">Mostrar desativados</span>
+    </label>
+    <div class="acoes">
+      <button class="botao botao--contorno" type="submit" th:text="#{global.buscar}">Buscar</button>
+      <a class="botao botao--texto" th:href="@{/clientes}" th:text="#{global.limpar}">Limpar filtros</a>
+    </div>
+  </form>
+
+  <div class="rolagem" tabindex="0" role="region" th:attr="aria-label=#{clientes.titulo}">
+    <table class="tabela" th:if="${!pagina.empty}">
+      <thead><tr>
+        <th scope="col" th:text="#{clientes.col.nome}">Cliente</th>
+        <th scope="col" th:text="#{clientes.col.documento}">Documento</th>
+        <th scope="col" th:text="#{clientes.col.vagas}">Vagas</th>
+        <th scope="col" th:text="#{clientes.col.situacao}">Contrato</th>
+      </tr></thead>
+      <tbody>
+        <tr th:each="c : ${pagina.content}">
+          <td>
+            <a th:href="@{/clientes/{id}(id=${c.id()})}" th:text="${c.nome()}">Cliente</a>
+            <span th:unless="${c.ativo()}" class="selo selo--neutro" th:text="#{clientes.desativado}">Desativado</span>
+          </td>
+          <td class="numero" th:text="${c.documento()}">00.000.000/0001-00</td>
+          <td class="numero" th:text="#{clientes.uso(${c.emUso()}, ${c.vagas()})}">4 de 5</td>
+          <td th:text="${c.situacao()}">Ativo</td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="tabela__vazia" th:if="${pagina.empty}">
+      <span th:text="#{clientes.vazio}">Nenhum cliente encontrado.</span>
+      <a th:href="@{/clientes/novo}" th:text="#{clientes.novo}">Cadastrar cliente</a>
+    </p>
+  </div>
+  <nav th:replace="~{global/global :: paginacao(${pagina})}"></nav>
+</main>
+
+<th:block th:replace="~{global/global :: rodape}"></th:block>
+</body>
+</html>

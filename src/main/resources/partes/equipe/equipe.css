@@ -1,0 +1,50 @@
+/* Equipe: lista de pessoas com as ações graves recolhidas. */
+
+.membros {
+  display: grid;
+  gap: 0;
+}
+
+.membro {
+  display: grid;
+  gap: var(--esp-3);
+  padding: var(--esp-3) 0;
+  border-bottom: var(--linha);
+}
+
+.membro__nome {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--esp-2) var(--esp-3);
+  font-weight: var(--peso-medio);
+}
+
+.membro__acoes summary {
+  list-style: none;
+  width: fit-content;
+}
+
+.membro__acoes summary::-webkit-details-marker {
+  display: none;
+}
+
+.membro__formularios {
+  display: grid;
+  gap: var(--esp-5);
+  margin-top: var(--esp-4);
+  padding: var(--esp-4);
+  border-left: 3px solid var(--cor-tinta);
+  background: var(--cor-papel-2);
+}
+
+@media (min-width: 48em) {
+  .membro {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+  }
+
+  .membro__acoes[open] {
+    grid-column: 1 / -1;
+  }
+}

@@ -1,0 +1,299 @@
+/* Portaria: o campo da placa, o resultado e a garagem do cliente. */
+
+.portaria {
+  display: grid;
+  gap: var(--esp-6);
+  margin-bottom: var(--esp-6);
+}
+
+.portaria__registro {
+  display: grid;
+  gap: var(--esp-5);
+  align-content: start;
+}
+
+/* O campo da placa é o maior elemento da tela: é por ele que tudo começa. */
+.registro {
+  display: grid;
+  gap: var(--esp-2);
+}
+
+.registro__rotulo {
+  font-family: var(--fonte-titulo);
+  font-stretch: var(--largura-titulo);
+  font-weight: var(--peso-forte);
+  font-size: var(--tam-sub);
+}
+
+.registro__campo {
+  width: 100%;
+  min-height: 4.5rem;
+  padding: var(--esp-2) var(--esp-4);
+  border: 2px solid var(--cor-tinta);
+  border-radius: var(--raio);
+  background: var(--cor-branco);
+  font-size: var(--tam-destaque);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.registro__campo[aria-invalid='true'] {
+  border-color: var(--cor-sinal-escuro);
+  box-shadow: inset 4px 0 0 var(--cor-sinal);
+}
+
+.registro__acoes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--esp-3);
+  margin-top: var(--esp-2);
+}
+
+.registro__acoes .botao {
+  min-height: 3.25rem;
+}
+
+/* ---------- Resultado ---------- */
+
+.resultado {
+  display: grid;
+  gap: var(--esp-2);
+  padding: var(--esp-4) 0 var(--esp-4) var(--esp-4);
+  border-left: 4px solid var(--cor-tinta);
+}
+
+.resultado--bloqueado {
+  border-left-color: var(--cor-sinal);
+}
+
+.resultado__titulo {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-2);
+  font-family: var(--fonte-titulo);
+  font-stretch: var(--largura-titulo);
+  font-weight: var(--peso-forte);
+  font-size: var(--tam-titulo-2);
+}
+
+.resultado--bloqueado .resultado__titulo {
+  color: var(--cor-sinal-escuro);
+}
+
+.resultado__icone {
+  width: 1.5rem;
+  height: 1.5rem;
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.5;
+  stroke-linecap: square;
+}
+
+.resultado__placa {
+  font-size: var(--tam-destaque);
+  font-weight: var(--peso-medio);
+  line-height: 1.05;
+}
+
+.resultado__frase {
+  font-size: var(--tam-texto-g);
+  max-width: 36rem;
+}
+
+.resultado__apoio {
+  color: var(--cor-tinta-2);
+}
+
+.resultado__lista {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-1) var(--esp-5);
+}
+
+.resultado__acoes {
+  margin-top: var(--esp-2);
+}
+
+.portaria__vazio {
+  padding-left: var(--esp-4);
+  border-left: 4px solid var(--cor-tinta-12);
+}
+
+/* ---------- Garagem ---------- */
+
+.garagem {
+  display: grid;
+  gap: var(--esp-4);
+  padding-top: var(--esp-3);
+  border-top: var(--linha-forte);
+}
+
+.garagem__cabecalho {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--esp-1) var(--esp-4);
+}
+
+.garagem__titulo {
+  font-family: var(--fonte-titulo);
+  font-stretch: var(--largura-titulo);
+  font-weight: var(--peso-forte);
+  font-size: var(--tam-titulo-2);
+}
+
+.garagem__contador {
+  font-weight: var(--peso-medio);
+}
+
+.garagem--cheia .garagem__contador {
+  color: var(--cor-sinal-escuro);
+}
+
+.garagem__contador-texto {
+  position: relative;
+  display: inline-block;
+}
+
+/* O número já aparece no valor final; só o traço acompanha a manobra (Base, 6.4). */
+.garagem__contador--mudou .garagem__contador-texto::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -0.2em;
+  height: 2px;
+  background: var(--cor-sinal);
+  transform-origin: left center;
+}
+
+.garagem__planta {
+  width: 100%;
+  height: auto;
+  background: var(--cor-papel-2);
+  border-radius: var(--raio);
+}
+
+.garagem__margem {
+  stroke: var(--cor-sinal);
+  stroke-width: 1.5;
+}
+
+.garagem__faixa {
+  stroke: var(--cor-tinta-30);
+  stroke-width: 1;
+  stroke-dasharray: 10 8;
+}
+
+.garagem__demarcacao {
+  stroke: var(--cor-tinta);
+  stroke-width: var(--traco);
+}
+
+.garagem__numero {
+  font-family: var(--fonte-placa);
+  font-size: var(--tam-quadro-numero);
+  fill: var(--cor-tinta-2);
+}
+
+.garagem__destaque {
+  fill: var(--cor-papel);
+  stroke: var(--cor-tinta);
+  stroke-width: 2.5;
+}
+
+.garagem__espera {
+  fill: var(--cor-sinal-12);
+  stroke: var(--cor-sinal);
+  stroke-width: var(--traco);
+  stroke-dasharray: 6 4;
+}
+
+.garagem__carro use {
+  fill: var(--cor-papel);
+  stroke: var(--cor-tinta);
+  stroke-width: var(--traco);
+  stroke-linejoin: round;
+}
+
+.garagem__carro--manobra use {
+  fill: var(--cor-tinta);
+  stroke: var(--cor-tinta);
+}
+
+.garagem__carro--barrado use {
+  fill: var(--cor-papel);
+  stroke: var(--cor-sinal-escuro);
+  stroke-width: 2;
+}
+
+.garagem__risco {
+  stroke: var(--cor-sinal);
+  stroke-width: 3.5;
+  stroke-linecap: square;
+  transform-box: fill-box;
+  transform-origin: left center;
+}
+
+.garagem__braco,
+.garagem__braco-faixas {
+  stroke-width: 5;
+  stroke-linecap: butt;
+  transform-box: view-box;
+  transform-origin: 0 0;
+}
+
+.garagem__braco {
+  stroke: var(--cor-tinta);
+}
+
+/* As faixas da cancela, como a pintura do braço de verdade. */
+.garagem__braco-faixas {
+  stroke: var(--cor-sinal);
+  stroke-dasharray: 8 8;
+}
+
+.garagem__pivo {
+  fill: var(--cor-tinta);
+}
+
+.garagem__legenda {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+  column-gap: var(--esp-4);
+}
+
+.garagem__item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 var(--esp-2);
+  padding: var(--esp-2) 0;
+  border-top: var(--linha);
+}
+
+.garagem__item--novo {
+  border-top: 2px solid var(--cor-tinta);
+  font-weight: var(--peso-medio);
+}
+
+.garagem__vaga {
+  min-width: 1.5rem;
+  font-family: var(--fonte-placa);
+  color: var(--cor-tinta-2);
+}
+
+.garagem--vazia {
+  min-height: 12rem;
+  align-content: start;
+}
+
+@media (min-width: 64em) {
+  .portaria {
+    grid-template-columns: minmax(22rem, 5fr) minmax(0, 7fr);
+    gap: var(--esp-7);
+    align-items: start;
+  }
+}

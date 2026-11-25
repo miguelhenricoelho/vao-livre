@@ -1,0 +1,26 @@
+# Segredos
+.env
+*.env
+!.env.example
+
+# Build
+target/
+
+# IDEs
+.idea/
+*.iml
+.vscode/
+.settings/
+.project
+.classpath
+
+# Sistema
+.DS_Store
+Thumbs.db
+
+# Ferramentas locais desta máquina
+.claude/
+CLAUDE.md
+
+# Material de trabalho (PROMPT MASTER), fora do repositório
+prompt/

@@ -1,0 +1,134 @@
+/* Clientes: lista, cadastro rápido e ficha. */
+
+.filtros {
+  display: grid;
+  gap: var(--esp-3);
+  align-items: end;
+  padding-bottom: var(--esp-5);
+  margin-bottom: var(--esp-4);
+  border-bottom: var(--linha);
+}
+
+.escolha {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-2) var(--esp-5);
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.escolha legend {
+  width: 100%;
+  margin-bottom: var(--esp-1);
+}
+
+.escolha input[type='radio'] {
+  border-radius: 50%;
+}
+
+.escolha input[type='radio']:checked::after {
+  border-radius: 50%;
+}
+
+.veiculos-novos {
+  display: grid;
+  border-top: var(--linha);
+}
+
+.veiculos-novos__linha {
+  display: grid;
+  gap: var(--esp-3);
+  padding: var(--esp-3) 0;
+  border-bottom: var(--linha);
+}
+
+.veiculos-novos__numero {
+  font-family: var(--fonte-placa);
+  color: var(--cor-tinta-2);
+}
+
+.formulario__fim {
+  padding-top: var(--esp-5);
+  border-top: var(--linha-forte);
+}
+
+/* Ficha */
+
+.ficha {
+  display: grid;
+  gap: var(--esp-6);
+  margin-bottom: var(--esp-5);
+}
+
+.ficha__lado {
+  display: grid;
+  gap: var(--esp-5);
+  align-content: start;
+}
+
+.ficha__bloco {
+  display: grid;
+  gap: var(--esp-3);
+  justify-items: start;
+  padding-top: var(--esp-3);
+  border-top: var(--linha-forte);
+}
+
+.ficha__bloco--grave {
+  border-top-color: var(--cor-sinal);
+}
+
+.ficha__titulo {
+  font-family: var(--fonte-titulo);
+  font-stretch: var(--largura-titulo);
+  font-weight: var(--peso-forte);
+  font-size: var(--tam-titulo-2);
+}
+
+.dados {
+  display: grid;
+  gap: var(--esp-3);
+  width: 100%;
+}
+
+.dados dt {
+  font-size: var(--tam-rotulo);
+  font-weight: var(--peso-medio);
+  color: var(--cor-tinta-2);
+}
+
+.dados__destaque {
+  font-family: var(--fonte-titulo);
+  font-stretch: var(--largura-titulo);
+  font-weight: var(--peso-forte);
+  font-size: var(--tam-titulo-1);
+  line-height: 1;
+}
+
+.dados__quebra {
+  overflow-wrap: anywhere;
+}
+
+@media (min-width: 48em) {
+  .filtros {
+    grid-template-columns: minmax(14rem, 2fr) minmax(10rem, 1fr) auto auto;
+  }
+
+  .veiculos-novos__linha {
+    grid-template-columns: 2rem minmax(9rem, 1fr) minmax(0, 2fr) minmax(0, 1fr);
+    align-items: start;
+  }
+
+  .veiculos-novos__numero {
+    padding-top: 2rem;
+  }
+}
+
+@media (min-width: 64em) {
+  .ficha {
+    grid-template-columns: minmax(0, 8fr) minmax(18rem, 4fr);
+    gap: var(--esp-7);
+    align-items: start;
+  }
+}

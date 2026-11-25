@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{global/global :: cabeca(#{clientes.editar}, ~{::link}, ~{::script})}">
+  <link rel="stylesheet" href="/clientes/clientes.css">
+  <script src="/clientes/clientes.js" defer></script>
+</head>
+<body>
+<th:block th:replace="~{global/global :: topo}"></th:block>
+
+<main class="conteudo" id="conteudo" tabindex="-1">
+  <header class="cabecalho">
+    <p class="cabecalho__rotulo"><a th:href="@{/clientes/{id}(id=${clienteId})}" th:text="#{global.voltar}">Voltar</a></p>
+    <h1 class="cabecalho__titulo" th:text="#{clientes.editar}">Editar dados</h1>
+  </header>
+
+  <form class="formulario" th:action="@{/clientes/{id}/editar(id=${clienteId})}" th:object="${form}" method="post" novalidate>
+    <fieldset class="escolha">
+      <legend class="campo__rotulo" th:text="#{clientes.tipo}">Tipo</legend>
+      <label class="marcador" th:each="t : ${tipos}">
+        <input type="radio" th:field="*{tipo}" th:value="${t}" data-tipo-cliente>
+        <span th:text="${t.descricao}">PJ</span>
+      </label>
+    </fieldset>
+    <div class="campo">
+      <label class="campo__rotulo" for="nome" th:text="#{clientes.nome}">Nome</label>
+      <input class="entrada" id="nome" type="text" th:field="*{nome}" required
+             th:attr="aria-invalid=${#fields.hasErrors('nome') ? 'true' : null}">
+      <p class="campo__erro" th:if="${#fields.hasErrors('nome')}" th:errors="*{nome}">Erro</p>
+    </div>
+    <div class="campo">
+      <label class="campo__rotulo" for="documento" th:text="#{clientes.documento}">CPF ou CNPJ</label>
+      <input class="entrada numero" id="documento" type="text" inputmode="numeric" th:field="*{documento}" required data-mascara="documento"
+             th:attr="aria-invalid=${#fields.hasErrors('documento') ? 'true' : null}">
+      <p class="campo__erro" th:if="${#fields.hasErrors('documento')}" th:errors="*{documento}">Erro</p>
+    </div>
+    <div class="campo">
+      <label class="campo__rotulo" for="responsavel" th:text="#{clientes.responsavel}">Responsável</label>
+      <input class="entrada" id="responsavel" type="text" th:field="*{responsavel}">
+    </div>
+    <div class="campo">
+      <label class="campo__rotulo" for="telefone" th:text="#{clientes.telefone}">WhatsApp</label>
+      <input class="entrada numero" id="telefone" type="tel" inputmode="tel" th:field="*{telefone}" data-mascara="telefone"
+             th:attr="aria-invalid=${#fields.hasErrors('telefone') ? 'true' : null}">
+      <p class="campo__erro" th:if="${#fields.hasErrors('telefone')}" th:errors="*{telefone}">Erro</p>
+    </div>
+    <div class="campo">
+      <label class="campo__rotulo" for="email" th:text="#{clientes.email}">E-mail</label>
+      <input class="entrada" id="email" type="email" inputmode="email" th:field="*{email}"
+             th:attr="aria-invalid=${#fields.hasErrors('email') ? 'true' : null}">
+      <p class="campo__erro" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Erro</p>
+    </div>
+    <div class="acoes">
+      <button class="botao" type="submit" th:text="#{global.salvar}">Salvar</button>
+      <a class="botao botao--texto" th:href="@{/clientes/{id}(id=${clienteId})}" th:text="#{global.cancelar}">Cancelar</a>
+    </div>
+  </form>
+</main>
+
+<th:block th:replace="~{global/global :: rodape}"></th:block>
+</body>
+</html>
